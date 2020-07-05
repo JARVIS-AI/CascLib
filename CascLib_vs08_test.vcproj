@@ -430,10 +430,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath=".\src\CascCommon.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\CascDecompress.cpp"
 				>
 			</File>
@@ -454,6 +450,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\CascIndexFiles.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\CascOpenFile.cpp"
 				>
 			</File>
@@ -467,6 +467,10 @@
 			</File>
 			<File
 				RelativePath=".\src\CascRootFile_Diablo3.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\CascRootFile_Install.cpp"
 				>
 			</File>
 			<File
@@ -486,7 +490,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\CascRootFile_WoW6.cpp"
+				RelativePath=".\src\CascRootFile_WoW.cpp"
 				>
 			</File>
 			<File
@@ -526,40 +530,16 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="libtomcrypt"
+				Name="md5"
 				>
-				<Filter
-					Name="hashes"
+				<File
+					RelativePath=".\src\md5\md5.cpp"
 					>
-					<File
-						RelativePath=".\src\libtomcrypt\src\hashes\hash_memory.c"
-						>
-					</File>
-					<File
-						RelativePath=".\src\libtomcrypt\src\hashes\md5.c"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="misc"
+				</File>
+				<File
+					RelativePath=".\src\md5\md5.h"
 					>
-					<File
-						RelativePath=".\src\libtomcrypt\src\misc\crypt_argchk.c"
-						>
-					</File>
-					<File
-						RelativePath=".\src\libtomcrypt\src\misc\crypt_hash_descriptor.c"
-						>
-					</File>
-					<File
-						RelativePath=".\src\libtomcrypt\src\misc\crypt_hash_is_valid.c"
-						>
-					</File>
-					<File
-						RelativePath=".\src\libtomcrypt\src\misc\crypt_libc.c"
-						>
-					</File>
-				</Filter>
+				</File>
 			</Filter>
 			<Filter
 				Name="zlib"
@@ -797,19 +777,19 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\common\Directory.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\common\Directory.h"
-					>
-				</File>
-				<File
 					RelativePath=".\src\common\Csv.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\src\common\Csv.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\common\Directory.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\common\Directory.h"
 					>
 				</File>
 				<File
@@ -834,10 +814,6 @@
 				</File>
 				<File
 					RelativePath=".\src\common\ListFile.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\common\Map.cpp"
 					>
 				</File>
 				<File
@@ -867,6 +843,10 @@
 			</File>
 			<File
 				RelativePath=".\src\CascPort.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\CascStructs.h"
 				>
 			</File>
 		</Filter>

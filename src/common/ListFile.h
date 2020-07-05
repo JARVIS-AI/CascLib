@@ -14,13 +14,12 @@
 //-----------------------------------------------------------------------------
 // Functions for parsing an external listfile
 
-void * ListFile_OpenExternal(const TCHAR * szListFile);
+void * ListFile_OpenExternal(LPCTSTR szListFile);
 void * ListFile_FromBuffer(LPBYTE pbBuffer, DWORD cbBuffer);
 bool   ListFile_VerifyMD5(void * pvListFile, LPBYTE pbHashMD5);
 size_t ListFile_GetNextLine(void * pvListFile, const char ** pszLineBegin, const char ** pszLineEnd);
 size_t ListFile_GetNextLine(void * pvListFile, char * szBuffer, size_t nMaxChars);
-size_t ListFile_GetNext(void * pvListFile, const char * szMask, char * szBuffer, size_t nMaxChars);
-void ListFile_Reset(void * pvListFile);
-void ListFile_Free(void * pvListFile);
+size_t ListFile_GetNext(void * pvListFile, char * szBuffer, size_t nMaxChars, PDWORD PtrFileDataId);
+LPBYTE ListFile_GetData(void * pvListFile, PDWORD PtrDataSize);
 
 #endif // __LISTFILE_H__

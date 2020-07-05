@@ -8,15 +8,6 @@
     <Filter Include="Source Files\jenkins">
       <UniqueIdentifier>{9a18e93e-eb26-4723-9997-d4a0958de918}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\libtomcrypt">
-      <UniqueIdentifier>{8aaa62c8-5c55-4e66-8015-c5e2d6c8e7f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\libtomcrypt\hashes">
-      <UniqueIdentifier>{3f610696-8a13-423f-8d18-1ee026ede341}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\libtomcrypt\misc">
-      <UniqueIdentifier>{61dd230b-8b34-431d-884c-3fa1ebec2ed7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\zlib">
       <UniqueIdentifier>{0237ac44-1e6e-49ed-b38c-19c5b3227c1b}</UniqueIdentifier>
     </Filter>
@@ -29,11 +20,11 @@
     <Filter Include="Doc Files">
       <UniqueIdentifier>{ab404055-21d6-46eb-912f-428ef5cc0606}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\md5">
+      <UniqueIdentifier>{826bb045-7312-4c69-b18d-5a4040b1bb10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\CascCommon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\CascDecompress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -64,7 +55,7 @@
     <ClCompile Include="src\CascRootFile_MNDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CascRootFile_WoW6.cpp">
+    <ClCompile Include="src\CascRootFile_WoW.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test\CascTest.cpp">
@@ -72,24 +63,6 @@
     </ClCompile>
     <ClCompile Include="src\jenkins\lookup3.c">
       <Filter>Source Files\jenkins</Filter>
-    </ClCompile>
-    <ClCompile Include="src\libtomcrypt\src\hashes\hash_memory.c">
-      <Filter>Source Files\libtomcrypt\hashes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\libtomcrypt\src\hashes\md5.c">
-      <Filter>Source Files\libtomcrypt\hashes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\libtomcrypt\src\misc\crypt_argchk.c">
-      <Filter>Source Files\libtomcrypt\misc</Filter>
-    </ClCompile>
-    <ClCompile Include="src\libtomcrypt\src\misc\crypt_hash_descriptor.c">
-      <Filter>Source Files\libtomcrypt\misc</Filter>
-    </ClCompile>
-    <ClCompile Include="src\libtomcrypt\src\misc\crypt_hash_is_valid.c">
-      <Filter>Source Files\libtomcrypt\misc</Filter>
-    </ClCompile>
-    <ClCompile Include="src\libtomcrypt\src\misc\crypt_libc.c">
-      <Filter>Source Files\libtomcrypt\misc</Filter>
     </ClCompile>
     <ClCompile Include="src\zlib\adler32.c">
       <Filter>Source Files\zlib</Filter>
@@ -124,9 +97,6 @@
     <ClCompile Include="src\common\ListFile.cpp">
       <Filter>Source Files\common</Filter>
     </ClCompile>
-    <ClCompile Include="src\common\Map.cpp">
-      <Filter>Source Files\common</Filter>
-    </ClCompile>
     <ClCompile Include="src\common\RootHandler.cpp">
       <Filter>Source Files\common</Filter>
     </ClCompile>
@@ -141,6 +111,15 @@
     </ClCompile>
     <ClCompile Include="src\CascRootFile_TVFS.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CascRootFile_Install.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CascIndexFiles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\md5\md5.cpp">
+      <Filter>Source Files\md5</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +158,12 @@
     </ClInclude>
     <ClInclude Include="src\common\FileTree.h">
       <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\md5\md5.h">
+      <Filter>Source Files\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CascStructs.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

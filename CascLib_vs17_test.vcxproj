@@ -22,30 +22,30 @@
     <ProjectName>CascLib_test</ProjectName>
     <ProjectGuid>{9403EA00-98F8-4D02-80B0-65D9168B0CCC}</ProjectGuid>
     <RootNamespace>CascLib_test</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -84,6 +84,7 @@
     <IntDir>./bin/$(ProjectName)/$(Platform)/$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>./bin/$(ProjectName)/$(Platform)/$(Configuration)\</OutDir>
@@ -96,6 +97,7 @@
     <IntDir>./bin/$(ProjectName)/$(Platform)/$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
@@ -106,7 +108,6 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;CASCLIB_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader />
@@ -153,7 +154,6 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;CASCLIB_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader />
@@ -285,40 +285,35 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\CascCommon.cpp" />
     <ClCompile Include="src\CascDecompress.cpp" />
     <ClCompile Include="src\CascDecrypt.cpp" />
     <ClCompile Include="src\CascDumpData.cpp" />
     <ClCompile Include="src\CascFiles.cpp" />
     <ClCompile Include="src\CascFindFile.cpp" />
+    <ClCompile Include="src\CascIndexFiles.cpp" />
     <ClCompile Include="src\CascOpenFile.cpp" />
     <ClCompile Include="src\CascOpenStorage.cpp" />
     <ClCompile Include="src\CascReadFile.cpp" />
     <ClCompile Include="src\CascRootFile_Diablo3.cpp" />
+    <ClCompile Include="src\CascRootFile_Install.cpp" />
     <ClCompile Include="src\CascRootFile_MNDX.cpp" />
     <ClCompile Include="src\CascRootFile_OW.cpp" />
     <ClCompile Include="src\CascRootFile_Text.cpp" />
     <ClCompile Include="src\CascRootFile_TVFS.cpp" />
-    <ClCompile Include="src\CascRootFile_WoW6.cpp" />
+    <ClCompile Include="src\CascRootFile_WoW.cpp" />
     <ClCompile Include="src\common\Common.cpp" />
     <ClCompile Include="src\common\Directory.cpp" />
     <ClCompile Include="src\common\Csv.cpp" />
     <ClCompile Include="src\common\FileStream.cpp" />
     <ClCompile Include="src\common\FileTree.cpp" />
     <ClCompile Include="src\common\ListFile.cpp" />
-    <ClCompile Include="src\common\Map.cpp" />
     <ClCompile Include="src\common\RootHandler.cpp" />
     <ClCompile Include="src\jenkins\lookup3.c">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level1</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level1</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level1</WarningLevel>
     </ClCompile>
-    <ClCompile Include="src\libtomcrypt\src\hashes\hash_memory.c" />
-    <ClCompile Include="src\libtomcrypt\src\hashes\md5.c" />
-    <ClCompile Include="src\libtomcrypt\src\misc\crypt_argchk.c" />
-    <ClCompile Include="src\libtomcrypt\src\misc\crypt_hash_descriptor.c" />
-    <ClCompile Include="src\libtomcrypt\src\misc\crypt_hash_is_valid.c" />
-    <ClCompile Include="src\libtomcrypt\src\misc\crypt_libc.c" />
+    <ClCompile Include="src\md5\md5.cpp" />
     <ClCompile Include="src\zlib\adler32.c">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level3</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level3</WarningLevel>
@@ -361,6 +356,7 @@
     <ClInclude Include="src\CascCommon.h" />
     <ClInclude Include="src\CascLib.h" />
     <ClInclude Include="src\CascPort.h" />
+    <ClInclude Include="src\CascStructs.h" />
     <ClInclude Include="src\common\Common.h" />
     <ClInclude Include="src\common\Directory.h" />
     <ClInclude Include="src\common\Csv.h" />
@@ -370,6 +366,7 @@
     <ClInclude Include="src\common\ListFile.h" />
     <ClInclude Include="src\common\Map.h" />
     <ClInclude Include="src\common\RootHandler.h" />
+    <ClInclude Include="src\md5\md5.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\History.txt" />

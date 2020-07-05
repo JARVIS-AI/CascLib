@@ -36,13 +36,21 @@ class TLogHelper
         // Fill the variables
         memset(this, 0, sizeof(TLogHelper));
 
+#ifdef PLATFORM_WINDOWS
+        InitializeCriticalSection(&Locker);
+#endif
+
+        // Remember the startup time
+        SetStartTime();
+        TotalFiles = 1;
+
         // Print the initial information
         if(szNewMainTitle != NULL)
         {
             char szTitle[101];
             size_t nLength;
 
-            nLength = sprintf(szTitle, "-- \"%s\" --", szNewMainTitle);
+            nLength = CascStrPrintf(szTitle, _countof(szTitle), "-- \"%s\" --", szNewMainTitle);
             while(nLength < 90)
                 szTitle[nLength++] = '-';
             if(nLength < sizeof(szTitle))
@@ -78,6 +86,10 @@ class TLogHelper
             }
         }
 
+#ifdef PLATFORM_WINDOWS
+        DeleteCriticalSection(&Locker);
+#endif
+
         printf("\n");
     }
 
@@ -86,7 +98,7 @@ class TLogHelper
     //
 
     template <typename XCHAR>
-    int PrintWithClreol(const XCHAR * szFormat, va_list argList, bool bPrintPrefix, bool bPrintLastError, bool bPrintEndOfLine)
+    DWORD PrintWithClreol(const XCHAR * szFormat, va_list argList, bool bPrintPrefix, bool bPrintLastError, bool bPrintEndOfLine)
     {
         char * szBufferPtr;
         char * szBufferEnd;
@@ -94,7 +106,7 @@ class TLogHelper
         size_t nRemainingWidth;
         size_t nConsoleWidth = GetConsoleWidth();
         size_t nLength = 0;
-        int nError = GetLastError();
+        DWORD dwErrCode = GetLastError();
 
         // Always start the buffer with '\r'
         szBufferEnd = szMessage + sizeof(szMessage);
@@ -120,6 +132,13 @@ class TLogHelper
             // Is there a format character?
             if(szFormat[0] == '%')
             {
+                if(szFormat[1] == '%')
+                {
+                    *szBufferPtr++ = '%';
+                    szFormat += 2;
+                    continue;
+                }
+
                 // String argument
                 if(IsFormatSpecifier(szFormat, "%s"))
                 {
@@ -132,7 +151,15 @@ class TLogHelper
                 // 64-bit integer argument
                 if(IsFormatSpecifier(szFormat, "%llu"))
                 {
-                    szBufferPtr += sprintf(szBufferPtr, fmt_I64u, va_arg(argList, ULONGLONG));
+                    szBufferPtr += CascStrPrintf(szBufferPtr, (szBufferEnd - szBufferPtr), fmt_I64u, va_arg(argList, ULONGLONG));
+                    szFormat += 4;
+                    continue;
+                }
+
+                // 64-bit integer argument (hexa)
+                if(IsFormatSpecifier(szFormat, "%llX"))
+                {
+                    szBufferPtr += CascStrPrintf(szBufferPtr, (szBufferEnd - szBufferPtr), fmt_I64X, va_arg(argList, ULONGLONG));
                     szFormat += 4;
                     continue;
                 }
@@ -140,7 +167,7 @@ class TLogHelper
                 // 32-bit integer argument
                 if(IsFormatSpecifier(szFormat, "%u"))
                 {
-                    szBufferPtr += sprintf(szBufferPtr, "%u", va_arg(argList, DWORD));
+                    szBufferPtr += CascStrPrintf(szBufferPtr, (szBufferEnd - szBufferPtr), "%u", va_arg(argList, DWORD));
                     szFormat += 2;
                     continue;
                 }
@@ -148,7 +175,7 @@ class TLogHelper
                 // 32-bit integer argument
                 if (IsFormatSpecifier(szFormat, "%08X"))
                 {
-                    szBufferPtr += sprintf(szBufferPtr, "%08X", va_arg(argList, DWORD));
+                    szBufferPtr += CascStrPrintf(szBufferPtr, (szBufferEnd - szBufferPtr), "%08X", va_arg(argList, DWORD));
                     szFormat += 4;
                     continue;
                 }
@@ -165,7 +192,7 @@ class TLogHelper
         // Append the last error
         if(bPrintLastError)
         {
-            nLength = sprintf(szBufferPtr, " (error code: %u)", nError);
+            nLength = CascStrPrintf(szBufferPtr, (szBufferEnd - szBufferPtr), " (error code: %u)", dwErrCode);
             szBufferPtr += nLength;
         }
 
@@ -190,7 +217,7 @@ class TLogHelper
         // Spit out the text in one single printf
         printf("%s", szMessage);
         nMessageCounter++;
-        return nError;
+        return dwErrCode;
     }
 
     template <typename XCHAR>
@@ -198,9 +225,13 @@ class TLogHelper
     {
         va_list argList;
 
-        va_start(argList, szFormat);
-        PrintWithClreol(szFormat, argList, true, false, false);
-        va_end(argList);
+        // Only print progress when the cooldown is ready
+        if(ProgressReady())
+        {
+            va_start(argList, szFormat);
+            PrintWithClreol(szFormat, argList, true, false, false);
+            va_end(argList);
+        }
     }
 
     template <typename XCHAR>
@@ -211,6 +242,15 @@ class TLogHelper
         va_start(argList, szFormat);
         PrintWithClreol(szFormat, argList, true, false, true);
         va_end(argList);
+    }
+
+    void PrintTotalTime()
+    {
+        DWORD TotalTime = SetEndTime();
+
+        if(TotalTime != 0)
+            PrintMessage("TotalTime: %u.%u second(s)", (TotalTime / 1000), (TotalTime % 1000));
+        PrintMessage("Work complete.");
     }
 
     template <typename XCHAR>
@@ -233,64 +273,116 @@ class TLogHelper
     }
 
     //
+    // Locking functions (Windows only)
+    //
+
+    void Lock()
+    {
+#ifdef PLATFORM_WINDOWS
+        EnterCriticalSection(&Locker);
+#endif
+    }
+
+    void Unlock()
+    {
+#ifdef PLATFORM_WINDOWS
+        LeaveCriticalSection(&Locker);
+#endif
+    }
+
+    void IncrementTotalBytes(ULONGLONG IncrementValue)
+    {
+        // For some weird reason, this is measurably faster then InterlockedAdd64
+        Lock();
+        TotalBytes = TotalBytes + IncrementValue;
+        Unlock();
+    }
+
+    //
     //  Time functions
     //
 
-    void SetStartTime()
+    ULONGLONG GetCurrentThreadTime()
     {
-        StartTime = time(NULL);
+#ifdef _WIN32
+        ULONGLONG TempTime = 0;
+
+        GetSystemTimeAsFileTime((LPFILETIME)(&TempTime));
+        return ((TempTime) / 10 / 1000);
+
+        //ULONGLONG KernelTime = 0;
+        //ULONGLONG UserTime = 0;
+        //ULONGLONG TempTime = 0;
+
+        //GetThreadTimes(GetCurrentThread(), (LPFILETIME)&TempTime, (LPFILETIME)&TempTime, (LPFILETIME)&KernelTime, (LPFILETIME)&UserTime);
+        //return ((KernelTime + UserTime) / 10 / 1000);
+#else
+        return time(NULL) * 1000;
+#endif
     }
 
-    time_t SetEndTime()
+    bool ProgressReady()
     {
-        EndTime = time(NULL);
-        return (EndTime - StartTime);
-    }
+        time_t dwTickCount = time(NULL);
+        bool bResult = false;
 
-    //
-    //  Hashing functions
-    //
-
-    void InitHasher()
-    {
-        md5_init(&MD5State);
-        HasherReady = true;
-    }
-
-    void HashData(const unsigned char * data, size_t length)
-    {
-        if(HasherReady)
+        if(dwTickCount > dwPrevTickCount)
         {
-            md5_process(&MD5State, data, (unsigned long)length);
+            dwPrevTickCount = dwTickCount;
+            bResult = true;
+        }
+
+        return bResult;
+    }
+
+    ULONGLONG SetStartTime()
+    {
+        StartTime = GetCurrentThreadTime();
+        return StartTime;
+    }
+
+    DWORD SetEndTime()
+    {
+        EndTime = GetCurrentThreadTime();
+        return (DWORD)(EndTime - StartTime);
+    }
+
+    void FormatTotalBytes(char * szBuffer, size_t ccBuffer)
+    {
+        ULONGLONG Bytes = TotalBytes;
+        ULONGLONG Divider = 1000000000;
+        char * szBufferEnd = szBuffer + ccBuffer;
+        bool bDividingOn = false;
+
+        while((szBuffer + 4) < szBufferEnd && Divider > 0)
+        {
+            // Are we already dividing?
+            if(bDividingOn)
+            {
+                szBuffer += CascStrPrintf(szBuffer, ccBuffer, " %03u", (DWORD)(Bytes / Divider));
+                Bytes = Bytes % Divider;
+            }
+            else if(Bytes > Divider)
+            {
+                szBuffer += CascStrPrintf(szBuffer, ccBuffer, "%u", (DWORD)(Bytes / Divider));
+                Bytes = Bytes % Divider;
+                bDividingOn = true;
+            }
+            Divider /= 1000;
         }
     }
 
-    const char * GetHash()
-    {
-        // If we are in the hashing process, we get the hash and convert to string
-        if(HasherReady)
-        {
-            unsigned char md5_binary[MD5_HASH_SIZE];
-
-            md5_done(&MD5State, md5_binary);
-            StringFromBinary(md5_binary, MD5_HASH_SIZE, szHashString);
-            HasherReady = false;
-        }
-
-        // Return the hash as string
-        return szHashString;
-    }
+#ifdef PLATFORM_WINDOWS
+    CRITICAL_SECTION Locker;
+#endif
 
     ULONGLONG TotalBytes;                           // For user's convenience: Total number of bytes
     ULONGLONG ByteCount;                            // For user's convenience: Current number of bytes
-    hash_state MD5State;                            // For user's convenience: Md5 state
-    time_t StartTime;                               // Start time of an operation
-    time_t EndTime;                                 // End time of an operation
+    ULONGLONG StartTime;                            // Start time of an operation, in milliseconds
+    ULONGLONG EndTime;                              // End time of an operation, in milliseconds
     DWORD TotalFiles;                               // For user's convenience: Total number of files
     DWORD FileCount;                                // For user's convenience: Curernt number of files
-    char  szHashString[MD5_STRING_SIZE+1];          // Final hash of the data
     DWORD DontPrintResult:1;                        // If true, supresset pringing result from the destructor
-    DWORD HasherReady:1;                            // If true, supresset pringing result from the destructor
 
     protected:
 
@@ -337,5 +429,6 @@ class TLogHelper
     size_t nSaveConsoleWidth;                       // Saved width of the console window, in chars
     size_t nMessageCounter;
     size_t nTextLength;                             // Length of the previous progress message
+    time_t dwPrevTickCount;
     bool bMessagePrinted;
 };
